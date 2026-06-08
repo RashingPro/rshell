@@ -1,0 +1,3 @@
+unstable_features = true
+trailing_comma = "Never"
+imports_granularity = "Module"
