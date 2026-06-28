@@ -8,5 +8,5 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
-mlua = { version = "0.11.6", features = ["luau", "async", "send"] }
-tokio = { version = "1.52.3", features = ["rt", "parking_lot", "time"] }
+mlua = { workspace = true, features = ["luau", "async", "send"] }
+tokio = { workspace = true, features = ["rt", "parking_lot", "time"] }

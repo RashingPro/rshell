@@ -24,3 +24,8 @@ codegen-units = 1
 [workspace.dependencies]
 rshell-cli = { path = "crates/rshell-cli" }
 rshell-runtime = { path = "crates/rshell-runtime" }
+
+tokio = "1.52.3"
+
+clap = "4.6.1"
+mlua = "0.11.6"
