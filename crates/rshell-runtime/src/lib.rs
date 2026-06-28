@@ -1,6 +1,6 @@
-mod config;
+mod lua;
 
-use crate::config::ConfigRuntime;
+use lua::runtime::ConfigRuntime;
 use std::path::PathBuf;
 
 pub struct Runtime {
