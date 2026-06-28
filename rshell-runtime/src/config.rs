@@ -30,7 +30,9 @@ impl ConfigRuntime {
     }
 
     async fn run(lua: Lua, config: PathBuf) {
-        lua.load(config).exec_async().await.unwrap();
+        if let Err(error) = lua.load(config).exec_async().await {
+            println!("Config execution error:\n{}", error);
+        }
     }
 
     pub async fn join(self) {
