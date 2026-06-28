@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["rshell-cli", "rshell-runtime"]
+members = ["crates/*"]
 
 [workspace.package]
 version = "0.1.0"
@@ -22,5 +22,5 @@ lto = true
 codegen-units = 1
 
 [workspace.dependencies]
-rshell-cli = { path = "rshell-cli" }
-rshell-runtime = { path = "rshell-runtime" }
+rshell-cli = { path = "crates/rshell-cli" }
+rshell-runtime = { path = "crates/rshell-runtime" }
