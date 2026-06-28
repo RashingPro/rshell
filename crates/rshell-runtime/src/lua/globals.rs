@@ -1,9 +1,11 @@
+use log::trace;
 use mlua::{FromLuaMulti, IntoLua, IntoLuaMulti, Lua, MaybeSend, Result, Table};
 use std::fmt::Display;
 use std::time::Duration;
 
 pub fn init_globals(lua: &Lua) {
     register_global_async_function(lua, "sleep", async move |_, amount: u64| {
+        trace!(target: "lua_globals", "Sleeping for {} milliseconds", amount);
         tokio::time::sleep(Duration::from_millis(amount)).await;
         Ok(())
     })

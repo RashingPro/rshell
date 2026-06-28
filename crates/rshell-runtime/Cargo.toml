@@ -10,3 +10,4 @@ workspace = true
 [dependencies]
 mlua = { workspace = true, features = ["luau", "async", "send"] }
 tokio = { workspace = true, features = ["rt", "parking_lot", "time"] }
+log.workspace = true
