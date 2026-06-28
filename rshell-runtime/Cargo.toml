@@ -1,0 +1,12 @@
+[package]
+name = "rshell-runtime"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mlua = { version = "0.11.6", features = ["luau", "async", "send"] }
+tokio = { version = "1.52.3", features = ["rt", "parking_lot"] }

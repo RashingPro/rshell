@@ -1,4 +1,5 @@
 use clap::{ArgAction, Parser, Subcommand};
+use rshell_runtime::Runtime;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -35,5 +36,17 @@ enum Subcommands {
 
 fn main() {
     let cli = Cli::parse();
-    todo!("handle cli")
+
+    match cli.command {
+        Subcommands::Run { config } => {
+            run(config.unwrap_or(PathBuf::from(env!("DEFAULT_CONFIG_PATH"))))
+        }
+        _ => unimplemented!("unimplemented subcommand")
+    }
+}
+
+#[tokio::main]
+async fn run(config: PathBuf) {
+    let runtime = Runtime::new(config);
+    runtime.join().await;
 }

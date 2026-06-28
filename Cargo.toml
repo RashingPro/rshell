@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["rshell", "rshell-cli", "rshell-config"]
+members = ["rshell-cli", "rshell-runtime"]
 
 [workspace.package]
 version = "0.1.0"
@@ -22,6 +22,5 @@ lto = true
 codegen-units = 1
 
 [workspace.dependencies]
-rshell = { path = "rshell" }
 rshell-cli = { path = "rshell-cli" }
-rshell-config = { path = "rshell-config" }
+rshell-runtime = { path = "rshell-runtime" }
