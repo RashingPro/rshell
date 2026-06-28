@@ -1,6 +1,9 @@
 ### Build output ###
 /target
 
+### Dotenv ###
+*.env
+
 ### IDEs and editors ###
 /.idea/*
 /.vscode/*
