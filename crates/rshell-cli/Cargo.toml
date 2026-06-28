@@ -12,3 +12,5 @@ rshell-runtime.workspace = true
 
 clap = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros", "parking_lot"] }
+log.workspace = true
+colog.workspace = true

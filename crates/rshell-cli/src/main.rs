@@ -1,4 +1,5 @@
 use clap::{ArgAction, Parser, Subcommand};
+use log::LevelFilter;
 use rshell_runtime::Runtime;
 use std::path::PathBuf;
 
@@ -17,7 +18,16 @@ struct Cli {
     command: Subcommands,
 
     #[arg(short, long, help = "Print version", action = ArgAction::Version)]
-    version: ()
+    version: (),
+
+    #[arg(
+        short,
+        long,
+        action,
+        help = "Enable more verbose logging",
+        global = true
+    )]
+    debug: bool
 }
 
 #[derive(Subcommand)]
@@ -36,6 +46,14 @@ enum Subcommands {
 
 fn main() {
     let cli = Cli::parse();
+
+    colog::default_builder()
+        .filter_level(if cli.debug {
+            LevelFilter::max()
+        } else {
+            LevelFilter::Info
+        })
+        .init();
 
     match cli.command {
         Subcommands::Run { config } => {
