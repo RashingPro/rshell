@@ -29,7 +29,7 @@ impl ConfigRuntime {
 
     async fn run(lua: Lua, config: PathBuf) {
         if let Err(error) = lua.load(config).exec_async().await {
-            println!("Config execution error:\n{}", error);
+            panic!("Config execution error:\n{}", error);
         }
     }
 
