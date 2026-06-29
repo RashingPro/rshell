@@ -1,3 +1,4 @@
+use crate::component::Component;
 use log::trace;
 use mlua::{FromLuaMulti, IntoLua, IntoLuaMulti, Lua, MaybeSend, Result, Table};
 use std::fmt::Display;
@@ -8,7 +9,9 @@ pub fn init_globals(lua: &Lua) {
         trace!(target: "lua_globals", "Sleeping for {} milliseconds", amount);
         tokio::time::sleep(Duration::from_millis(amount)).await;
         Ok(())
-    })
+    });
+
+    register_global_function(lua, "component", move |_, ()| Ok(Component::default()));
 }
 
 fn register_global_function<F, A, R>(lua: &Lua, name: impl IntoLua + Display + Clone, function: F)

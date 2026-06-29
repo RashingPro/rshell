@@ -1,3 +1,4 @@
+mod component;
 mod lua;
 
 use lua::runtime::ConfigRuntime;
