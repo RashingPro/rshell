@@ -1,6 +1,7 @@
 mod component;
 mod lua;
 
+use log::info;
 use lua::runtime::ConfigRuntime;
 use std::path::PathBuf;
 
@@ -16,6 +17,11 @@ impl Runtime {
     }
 
     pub async fn join(self) {
-        self.config.join().await;
+        let collector = self.config.join().await;
+        let render_components = collector.read();
+        info!(
+            "Config executed successfully. Collected {} component(s) to render.",
+            render_components.len()
+        );
     }
 }
