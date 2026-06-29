@@ -11,7 +11,10 @@ pub fn init_globals(lua: &Lua) {
         Ok(())
     });
 
-    register_global_function(lua, "component", move |_, ()| Ok(Component::default()));
+    register_global_function(lua, "component", move |_, ()| {
+        trace!(target: "lua_globals", "Creating component");
+        Ok(Component::default())
+    });
 }
 
 fn register_global_function<F, A, R>(lua: &Lua, name: impl IntoLua + Display + Clone, function: F)
