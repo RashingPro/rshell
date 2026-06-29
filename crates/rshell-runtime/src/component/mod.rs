@@ -1,9 +1,13 @@
+pub mod builtin;
+
+use crate::component::builtin::BuiltInComponent;
 use mlua::prelude::LuaError;
 use mlua::{FromLua, IntoLua, Lua, Table, Value};
 
 #[derive(Clone, Default, Debug)]
 pub struct Component {
-    children: Vec<Component>
+    children: Vec<Component>,
+    builtin: BuiltInComponent
 }
 
 impl Component {
@@ -45,13 +49,14 @@ impl IntoLua for Component {
         table.set_metatable(Some(metatable))?;
 
         table.set("children", self.children)?;
+        table.set("builtin_component_name", self.builtin.into_lua(lua)?)?;
 
         Ok(Value::Table(table))
     }
 }
 
 impl FromLua for Component {
-    fn from_lua(value: Value, _: &Lua) -> mlua::Result<Self> {
+    fn from_lua(value: Value, lua: &Lua) -> mlua::Result<Self> {
         let Value::Table(table) = value else {
             return Err(LuaError::FromLuaConversionError {
                 from: value.type_name(),
@@ -68,6 +73,9 @@ impl FromLua for Component {
                 message: Some("Expected array of children".to_owned())
             })?;
 
-        Ok(Component { children })
+        Ok(Component {
+            children,
+            builtin: BuiltInComponent::from_lua(table.raw_get("builtin_component_name")?, lua)?
+        })
     }
 }

@@ -36,3 +36,6 @@ colog = "1.4.0"
 
 # Data structures
 parking_lot = "0.12.5"
+
+# Utils
+strum = "0.28.0"

@@ -12,3 +12,5 @@ mlua = { workspace = true, features = ["luau", "async", "send"] }
 tokio = { workspace = true, features = ["rt", "parking_lot", "time"] }
 log.workspace = true
 parking_lot.workspace = true
+strum = { workspace = true, features = ["derive"] }
+    
