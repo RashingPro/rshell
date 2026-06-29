@@ -1,15 +1,15 @@
 use crate::component::Component;
+use crate::error::{Error, Result};
 use crate::lua::globals::init_globals;
 use mlua::{Lua, LuaOptions, StdLib};
 use parking_lot::RwLock;
 use std::path::PathBuf;
 use std::sync::Arc;
-use tokio::spawn;
-use tokio::task::JoinHandle;
 
 pub struct ConfigRuntime {
-    task_handle: JoinHandle<()>,
-    collector: Arc<RwLock<ConfigRuntimeCollector>>
+    collector: Arc<RwLock<ConfigRuntimeCollector>>,
+    lua: Lua,
+    config: PathBuf
 }
 
 impl ConfigRuntime {
@@ -22,20 +22,28 @@ impl ConfigRuntime {
         init_globals(&lua, collector.clone());
 
         Self {
-            task_handle: spawn(Self::run(lua, config)),
-            collector
+            collector,
+            lua,
+            config
         }
     }
 
-    async fn run(lua: Lua, config: PathBuf) {
-        if let Err(error) = lua.load(config).exec_async().await {
-            panic!("Config execution error:\n{}", error);
+    pub async fn run(self) -> Result<ConfigRuntimeCollector> {
+        if let Err(error) = self.lua.load(self.config).exec_async().await {
+            return Err(Error::ConfigExecutionError { inner: error });
         }
-    }
 
-    pub async fn join(self) -> ConfigRuntimeCollector {
-        self.task_handle.await.unwrap();
-        Arc::into_inner(self.collector).unwrap().into_inner()
+        drop(self.lua); // Required to drop all shared references (except one stored in the struct directly)
+
+        let Some(arc_inner) = Arc::into_inner(self.collector) else {
+            return Err(Error::Other {
+                message: "Collector arc contains more than one strong reference. This is a bug. \
+                          Please file an issue."
+                    .to_owned()
+            });
+        };
+
+        Ok(arc_inner.into_inner())
     }
 }
 

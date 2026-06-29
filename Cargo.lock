@@ -557,6 +557,7 @@ dependencies = [
  "mlua",
  "parking_lot",
  "strum",
+ "thiserror",
  "tokio",
 ]
 
