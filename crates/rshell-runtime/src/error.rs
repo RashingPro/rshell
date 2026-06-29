@@ -2,6 +2,8 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum Error {
+    #[error("Invalid component: {message}")]
+    InvalidComponent { message: String },
     #[error("Config execution error:\n{inner}")]
     ConfigExecutionError { inner: mlua::Error },
     #[error("{message}")]

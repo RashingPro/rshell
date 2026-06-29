@@ -1,12 +1,14 @@
 pub mod builtin;
 
 use crate::component::builtin::BuiltInComponent;
+use getset::Getters;
 use mlua::prelude::LuaError;
 use mlua::{FromLua, IntoLua, Lua, Table, Value};
 
-#[derive(Clone, Default, Debug)]
+#[derive(Clone, Default, Debug, Getters)]
 pub struct Component {
     children: Vec<Component>,
+    #[getset(get = "pub")]
     builtin: BuiltInComponent
 }
 
