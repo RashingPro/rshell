@@ -1,6 +1,6 @@
-pub mod builtin;
+pub mod primitive;
 
-use crate::component::builtin::BuiltInComponent;
+use crate::component::primitive::PrimitiveComponent;
 use getset::Getters;
 use mlua::prelude::LuaError;
 use mlua::{FromLua, IntoLua, Lua, Table, Value};
@@ -9,7 +9,7 @@ use mlua::{FromLua, IntoLua, Lua, Table, Value};
 pub struct Component {
     children: Vec<Component>,
     #[getset(get = "pub")]
-    builtin: BuiltInComponent
+    primitive: PrimitiveComponent
 }
 
 impl Component {
@@ -35,7 +35,7 @@ impl IntoLua for Component {
         }
 
         private.set("children", self.children)?;
-        private.set("builtin_component_name", self.builtin.into_lua(lua)?)?;
+        private.set("primitive_component_name", self.primitive.into_lua(lua)?)?;
 
         // TODO: we might want add warning log when accessing it from lua
         table.set("__internal", private)?;
@@ -67,7 +67,10 @@ impl FromLua for Component {
 
         Ok(Component {
             children,
-            builtin: BuiltInComponent::from_lua(private.raw_get("builtin_component_name")?, lua)?
+            primitive: PrimitiveComponent::from_lua(
+                private.raw_get("primitive_component_name")?,
+                lua
+            )?
         })
     }
 }

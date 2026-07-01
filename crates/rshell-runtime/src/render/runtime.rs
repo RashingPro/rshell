@@ -1,5 +1,5 @@
 use crate::component::Component;
-use crate::component::builtin::BuiltInComponent;
+use crate::component::primitive::PrimitiveComponent;
 use crate::error::{Error, Result};
 use mlua::Lua;
 
@@ -19,9 +19,9 @@ impl RenderRuntime {
 
     pub async fn run(self) -> Result<()> {
         for component in self.render_components {
-            if let BuiltInComponent::Unknown = component.builtin() {
+            if let PrimitiveComponent::Unknown = component.primitive() {
                 return Err(Error::InvalidComponent {
-                    message: "Attempted to render unknown builtin component".to_owned()
+                    message: "Attempted to render unknown primitive component".to_owned()
                 });
             }
             // TODO: proceed with rendering here
