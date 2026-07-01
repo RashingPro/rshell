@@ -22,8 +22,6 @@ impl ConfigRuntime {
 
         let collector = Arc::new(RwLock::new(ConfigRuntimeCollector::new()));
 
-        prepare_collecting_stage(&lua, collector.clone());
-
         Self {
             collector,
             lua,
@@ -32,6 +30,12 @@ impl ConfigRuntime {
     }
 
     pub async fn run(self) -> Result<(Lua, ConfigRuntimeCollector)> {
+        prepare_collecting_stage(&self.lua, self.collector.clone()).map_err(|err| {
+            Error::Other {
+                message: format!("Error while preparing Lua runtime:\n{}", err)
+            }
+        })?;
+
         if let Err(error) = self.lua.load(self.config).exec_async().await {
             return Err(Error::from(error));
         }
