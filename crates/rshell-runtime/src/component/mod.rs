@@ -22,36 +22,23 @@ impl IntoLua for Component {
     fn into_lua(self, lua: &Lua) -> mlua::Result<Value> {
         let table = lua.create_table()?;
 
-        let metatable = lua.create_table()?;
-
-        let public = lua.create_table()?;
+        let private = lua.create_table()?;
 
         {
-            let table = table.clone();
-            public.set(
+            let private = private.clone();
+            table.set(
                 "child",
                 lua.create_function(move |_, child: Component| {
-                    table.raw_get::<Table>("children")?.push(child)
+                    private.get::<Table>("children")?.push(child)
                 })?
             )?;
         }
 
-        {
-            let public = public.clone();
-            metatable.set(
-                "__index",
-                lua.create_function(move |_, (_, key): (Table, Value)| -> mlua::Result<Value> {
-                    public.raw_get(key)
-                })?
-            )?;
-        }
+        private.set("children", self.children)?;
+        private.set("builtin_component_name", self.builtin.into_lua(lua)?)?;
 
-        table.set("public", public)?;
-
-        table.set_metatable(Some(metatable))?;
-
-        table.set("children", self.children)?;
-        table.set("builtin_component_name", self.builtin.into_lua(lua)?)?;
+        // TODO: we might want add warning log when accessing it from lua
+        table.set("__internal", private)?;
 
         Ok(Value::Table(table))
     }
@@ -67,17 +54,20 @@ impl FromLua for Component {
             });
         };
 
-        let children = table
-            .raw_get("children")
-            .map_err(|_| LuaError::FromLuaConversionError {
-                from: Value::Nil.type_name(),
-                to: "Vec<Component>".to_owned(),
-                message: Some("Expected array of children".to_owned())
-            })?;
+        let private = table.raw_get::<Table>("__internal")?;
+
+        let children =
+            private
+                .raw_get("children")
+                .map_err(|_| LuaError::FromLuaConversionError {
+                    from: Value::Nil.type_name(),
+                    to: "Vec<Component>".to_owned(),
+                    message: Some("Expected array of children".to_owned())
+                })?;
 
         Ok(Component {
             children,
-            builtin: BuiltInComponent::from_lua(table.raw_get("builtin_component_name")?, lua)?
+            builtin: BuiltInComponent::from_lua(private.raw_get("builtin_component_name")?, lua)?
         })
     }
 }
