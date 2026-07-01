@@ -40,8 +40,8 @@ impl ConfigRuntime {
 
         let Some(arc_inner) = Arc::into_inner(self.collector) else {
             return Err(Error::Other {
-                message: "Collector arc contains more than one strong reference. This is a bug. \
-                          Please file an issue."
+                message: "Collector arc contains more than one strong reference. You have saved a \
+                          reference to RShell global API somewhere."
                     .to_owned()
             });
         };
