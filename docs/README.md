@@ -6,3 +6,7 @@
 
 [//]: # (TODO: add description here)
 </div>
+
+> [!WARNING]
+> The project is in the active development stage. Everything is subject to change without bumping the major version.
+> See [SemVer](https://semver.org/) for more info.
