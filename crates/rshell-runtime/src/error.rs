@@ -10,4 +10,10 @@ pub enum Error {
     Other { message: String }
 }
 
+impl From<mlua::Error> for Error {
+    fn from(value: mlua::Error) -> Self {
+        Self::ConfigExecutionError { inner: value }
+    }
+}
+
 pub type Result<T> = std::result::Result<T, Error>;

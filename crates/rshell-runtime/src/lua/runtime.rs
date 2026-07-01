@@ -30,7 +30,7 @@ impl ConfigRuntime {
 
     pub async fn run(self) -> Result<ConfigRuntimeCollector> {
         if let Err(error) = self.lua.load(self.config).exec_async().await {
-            return Err(Error::ConfigExecutionError { inner: error });
+            return Err(Error::from(error));
         }
 
         drop(self.lua); // Required to drop all shared references (except one stored in the struct directly)
