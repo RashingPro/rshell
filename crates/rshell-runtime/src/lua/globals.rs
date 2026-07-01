@@ -8,7 +8,7 @@ use std::fmt::Display;
 use std::sync::Arc;
 use std::time::Duration;
 
-pub fn init_globals(lua: &Lua, collector: Arc<RwLock<ConfigRuntimeCollector>>) {
+pub fn prepare_collecting_stage(lua: &Lua, collector: Arc<RwLock<ConfigRuntimeCollector>>) {
     register_global_async_function(lua, "sleep", async move |_, amount: u64| {
         trace!(target: "lua_globals", "Sleeping for {} milliseconds", amount);
         tokio::time::sleep(Duration::from_millis(amount)).await;

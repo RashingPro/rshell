@@ -1,6 +1,6 @@
 use crate::component::Component;
 use crate::error::{Error, Result};
-use crate::lua::globals::{init_globals, prepare_render_stage};
+use crate::lua::globals::{prepare_collecting_stage, prepare_render_stage};
 use mlua::{Lua, LuaOptions, StdLib};
 use parking_lot::RwLock;
 use std::path::PathBuf;
@@ -22,7 +22,7 @@ impl ConfigRuntime {
 
         let collector = Arc::new(RwLock::new(ConfigRuntimeCollector::new()));
 
-        init_globals(&lua, collector.clone());
+        prepare_collecting_stage(&lua, collector.clone());
 
         Self {
             collector,
