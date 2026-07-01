@@ -31,6 +31,7 @@ struct Cli {
 }
 
 #[derive(Subcommand)]
+#[non_exhaustive]
 enum Subcommands {
     #[command(about = "Run a config file")]
     Run {
