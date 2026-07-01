@@ -1,5 +1,6 @@
-use log::trace;
-use mlua::{FromLuaMulti, IntoLua, IntoLuaMulti, Lua, MaybeSend, Result, Table};
+use crate::lua::format::format;
+use log::{info, trace};
+use mlua::{FromLuaMulti, IntoLua, IntoLuaMulti, Lua, MaybeSend, Result, Table, Value, Variadic};
 use std::fmt::Display;
 use std::time::Duration;
 
@@ -8,7 +9,13 @@ pub fn init_globals(lua: &Lua) {
         trace!(target: "lua_globals", "Sleeping for {} milliseconds", amount);
         tokio::time::sleep(Duration::from_millis(amount)).await;
         Ok(())
-    })
+    });
+
+    register_global_function(lua, "print", move |_, args: Variadic<Value>| {
+        let s = args.iter().map(format).collect::<Vec<String>>().join(" ");
+        info!(target: "config_runtime", "{}", s);
+        Ok(())
+    });
 }
 
 fn register_global_function<F, A, R>(lua: &Lua, name: impl IntoLua + Display + Clone, function: F)

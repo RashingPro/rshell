@@ -10,7 +10,7 @@ pub struct ConfigRuntime {
 
 impl ConfigRuntime {
     pub fn new(config: PathBuf) -> Self {
-        let lua = Lua::new_with(StdLib::NONE, LuaOptions::default())
+        let lua = Lua::new_with(StdLib::VECTOR, LuaOptions::default())
             .expect("Failed to create Lua runtime");
 
         init_globals(&lua);
