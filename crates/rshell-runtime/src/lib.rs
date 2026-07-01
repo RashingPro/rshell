@@ -1,5 +1,11 @@
+mod component;
+pub mod error;
 mod lua;
+mod render;
 
+use crate::error::Result;
+use crate::render::runtime::RenderRuntime;
+use log::info;
 use lua::runtime::ConfigRuntime;
 use std::path::PathBuf;
 
@@ -14,7 +20,17 @@ impl Runtime {
         }
     }
 
-    pub async fn join(self) {
-        self.config.join().await;
+    pub async fn run(self) -> Result<()> {
+        let (lua, collector) = self.config.run().await?;
+        let render_components = collector.read();
+        info!(
+            "Config executed successfully. Collected {} component(s) to render.",
+            render_components.len()
+        );
+
+        let render_runtime = RenderRuntime::new(lua, render_components);
+        render_runtime.run().await?;
+
+        Ok(())
     }
 }

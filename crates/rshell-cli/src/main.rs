@@ -1,5 +1,5 @@
 use clap::{ArgAction, Parser, Subcommand};
-use log::LevelFilter;
+use log::{LevelFilter, error};
 use rshell_runtime::Runtime;
 use std::path::PathBuf;
 
@@ -67,5 +67,7 @@ fn main() {
 #[tokio::main]
 async fn run(config: PathBuf) {
     let runtime = Runtime::new(config);
-    runtime.join().await;
+    if let Err(err) = runtime.run().await {
+        error!("{}", err);
+    }
 }
