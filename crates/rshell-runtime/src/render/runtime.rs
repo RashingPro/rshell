@@ -21,7 +21,7 @@ impl RenderRuntime {
         for component in self.render_components {
             if let PrimitiveComponent::Unknown = component.primitive() {
                 return Err(Error::InvalidComponent {
-                    message: "Attempted to render unknown primitive component".to_owned()
+                    message: "Attempted to render unknown primitive component.".to_owned()
                 });
             }
             // TODO: proceed with rendering here
