@@ -1,6 +1,6 @@
 use crate::component::Component;
 use crate::error::{Error, Result};
-use crate::lua::globals::init_globals;
+use crate::lua::globals::{init_globals, prepare_render_stage};
 use mlua::{Lua, LuaOptions, StdLib};
 use parking_lot::RwLock;
 use std::path::PathBuf;
@@ -28,12 +28,12 @@ impl ConfigRuntime {
         }
     }
 
-    pub async fn run(self) -> Result<ConfigRuntimeCollector> {
+    pub async fn run(self) -> Result<(Lua, ConfigRuntimeCollector)> {
         if let Err(error) = self.lua.load(self.config).exec_async().await {
             return Err(Error::from(error));
         }
 
-        drop(self.lua); // Required to drop all shared references (except one stored in the struct directly)
+        prepare_render_stage(&self.lua).map_err(Error::from)?;
 
         let Some(arc_inner) = Arc::into_inner(self.collector) else {
             return Err(Error::Other {
@@ -43,7 +43,7 @@ impl ConfigRuntime {
             });
         };
 
-        Ok(arc_inner.into_inner())
+        Ok((self.lua, arc_inner.into_inner()))
     }
 }
 

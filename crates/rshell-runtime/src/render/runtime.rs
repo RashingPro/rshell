@@ -1,15 +1,18 @@
 use crate::component::Component;
 use crate::component::builtin::BuiltInComponent;
 use crate::error::{Error, Result};
+use mlua::Lua;
 
 #[derive(Default)]
 pub struct RenderRuntime {
+    lua: Lua,
     render_components: Vec<Component>
 }
 
 impl RenderRuntime {
-    pub fn new(components: Vec<Component>) -> Self {
+    pub fn new(lua: Lua, components: Vec<Component>) -> Self {
         Self {
+            lua,
             render_components: components
         }
     }

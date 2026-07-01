@@ -26,6 +26,15 @@ pub fn init_globals(lua: &Lua, collector: Arc<RwLock<ConfigRuntimeCollector>>) {
     })
 }
 
+pub fn prepare_render_stage(lua: &Lua) -> Result<()> {
+    lua.globals().raw_remove("render")?;
+
+    // Calling twice is intentional. See gc_collect function docs.
+    lua.gc_collect()?;
+    lua.gc_collect()?;
+    Ok(())
+}
+
 fn register_global_function<F, A, R>(lua: &Lua, name: impl IntoLua + Display + Clone, function: F)
 where
     F: Fn(&Lua, A) -> Result<R> + MaybeSend + 'static,
