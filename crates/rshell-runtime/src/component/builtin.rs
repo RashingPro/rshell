@@ -4,6 +4,7 @@ use mlua::{FromLua, IntoLua, Lua, Value};
 use std::str::FromStr;
 
 #[derive(Clone, Default, Debug, strum::Display, strum::EnumString)]
+#[non_exhaustive]
 pub enum BuiltInComponent {
     #[default]
     Unknown
