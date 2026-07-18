@@ -22,13 +22,13 @@ impl Runtime {
 
     pub async fn run(self) -> Result<()> {
         let (lua, collector) = self.config.run().await?;
-        let render_components = collector.read();
+        let components = collector.read();
         info!(
-            "Config executed successfully. Collected {} component(s) to render.",
-            render_components.len()
+            "Config executed successfully. Collected {} component(s).",
+            components.len()
         );
 
-        let render_runtime = RenderRuntime::new(lua, render_components);
+        let render_runtime = RenderRuntime::new(lua, components);
         render_runtime.run().await?;
 
         Ok(())

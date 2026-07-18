@@ -55,21 +55,21 @@ impl ConfigRuntime {
 }
 
 pub struct ConfigRuntimeCollector {
-    render_components: Vec<Component>
+    registered_components: Vec<Component>
 }
 
 impl ConfigRuntimeCollector {
     pub fn new() -> Self {
         Self {
-            render_components: Vec::new()
+            registered_components: Vec::new()
         }
     }
 
-    pub fn collect_render(&mut self, root: Component) {
-        self.render_components.push(root);
+    pub fn register_component(&mut self, root: Component) {
+        self.registered_components.push(root);
     }
 
     pub fn read(self) -> Vec<Component> {
-        self.render_components
+        self.registered_components
     }
 }

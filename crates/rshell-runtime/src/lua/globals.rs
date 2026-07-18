@@ -29,9 +29,9 @@ pub fn prepare_collecting_stage(
         Ok(Component::default())
     })?;
 
-    register_global_function(lua, "render", move |_, root: Component| {
-        trace!(target: "lua_globals", "Collecting component to render");
-        collector.write().collect_render(root);
+    register_global_function(lua, "register", move |_, root: Component| {
+        trace!(target: "lua_globals", "Registering component");
+        collector.write().register_component(root);
         Ok(())
     })?;
 
@@ -39,7 +39,7 @@ pub fn prepare_collecting_stage(
 }
 
 pub fn prepare_render_stage(lua: &Lua) -> Result<()> {
-    lua.globals().raw_remove("render")?;
+    lua.globals().raw_remove("register")?;
 
     // Calling twice is intentional. See gc_collect function docs.
     lua.gc_collect()?;
