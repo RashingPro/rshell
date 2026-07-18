@@ -27,3 +27,4 @@ If you found security vulnerability, do **not** create a public issue. Instead, 
 2. If your pull request introduces a breaking (back-incompatible) change - mention it.
 3. Always use `cargo clippy` (or `cargo clippy --fix`) to lint and `cargo fmt` to format the
    code.
+4. Read [`CODE_STYLE.md`](./CODE_STYLE.md)
