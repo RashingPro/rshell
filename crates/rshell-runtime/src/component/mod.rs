@@ -8,7 +8,7 @@ use mlua::{FromLua, IntoLua, Lua, Table, Value};
 
 #[derive(Clone, Default, Debug, Getters)]
 pub struct Component {
-    children: Vec<Component>,
+    children: Vec<Self>,
     #[getset(get = "pub")]
     primitive: PrimitiveComponent
 }
@@ -40,7 +40,7 @@ impl IntoLua for Component {
             let private = private.clone();
             table.set(
                 "child",
-                lua.create_function(move |_, child: Component| {
+                lua.create_function(move |_, child: Self| {
                     private.get::<Table>("children")?.push(child)?;
                     Ok(table_clone.clone())
                 })?
@@ -62,7 +62,7 @@ impl FromLua for Component {
         let Value::Table(table) = value else {
             return Err(LuaError::FromLuaConversionError {
                 from: value.type_name(),
-                to: Component::type_name().to_owned(),
+                to: Self::type_name().to_owned(),
                 message: None
             });
         };
@@ -78,7 +78,7 @@ impl FromLua for Component {
                     message: Some("Expected array of children".to_owned())
                 })?;
 
-        Ok(Component {
+        Ok(Self {
             children,
             primitive: PrimitiveComponent::from_lua(private.raw_get("primitive")?, lua)?
         })
