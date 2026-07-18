@@ -1,6 +1,8 @@
 use crate::component::Component;
 use crate::component::primitive::PrimitiveComponent;
+use crate::component::window_lifetime::WindowLifetimeCreate;
 use crate::error::{Error, Result};
+use log::trace;
 use mlua::Lua;
 
 #[derive(Default)]
@@ -19,12 +21,34 @@ impl RenderRuntime {
 
     pub async fn run(self) -> Result<()> {
         for component in self.registered_components {
-            if let PrimitiveComponent::Unknown = component.primitive() {
-                return Err(Error::InvalidComponent {
-                    message: "Attempted to render unknown primitive component.".to_owned()
-                });
+            match component.primitive() {
+                PrimitiveComponent::Unknown => {
+                    return Err(Error::InvalidComponent {
+                        message: "Attempted to render unknown primitive component.".to_owned()
+                    });
+                }
+                PrimitiveComponent::Window { lifetime } => {
+                    match lifetime.create {
+                        WindowLifetimeCreate::Always => {
+                            trace!("Encountered with Always lifetime create policy. Rendering.");
+                            // TODO: render window right away
+                        }
+                        WindowLifetimeCreate::Prepare => {
+                            trace!("Encountered with Prepare lifetime create policy. Preparing.");
+                            // TODO: prepare window for rendering
+                        }
+                        WindowLifetimeCreate::Never => {
+                            trace!("Encountered with Never lifetime create policy. Skipping.");
+                            continue;
+                        }
+                    }
+                }
+                _ => {
+                    return Err(Error::InvalidComponent {
+                        message: format!("Can not render component \"{}\"", component.primitive())
+                    });
+                }
             }
-            // TODO: proceed with rendering here
         }
 
         Ok(())

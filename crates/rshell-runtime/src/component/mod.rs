@@ -1,4 +1,5 @@
 pub mod primitive;
+pub mod window_lifetime;
 
 use crate::component::primitive::PrimitiveComponent;
 use getset::Getters;
@@ -16,6 +17,13 @@ impl Component {
     pub const fn type_name() -> &'static str {
         "Component"
     }
+
+    pub fn new(primitive: PrimitiveComponent) -> Self {
+        Self {
+            primitive,
+            children: Vec::new()
+        }
+    }
 }
 
 impl IntoLua for Component {
@@ -24,18 +32,23 @@ impl IntoLua for Component {
 
         let private = lua.create_table()?;
 
+        self.primitive
+            .lua_api(lua, table.clone(), private.clone())?;
+
         {
+            let table_clone = table.clone();
             let private = private.clone();
             table.set(
                 "child",
                 lua.create_function(move |_, child: Component| {
-                    private.get::<Table>("children")?.push(child)
+                    private.get::<Table>("children")?.push(child)?;
+                    Ok(table_clone.clone())
                 })?
             )?;
         }
 
         private.set("children", self.children)?;
-        private.set("primitive_component_name", self.primitive.into_lua(lua)?)?;
+        private.set("primitive", self.primitive.into_lua(lua)?)?;
 
         // TODO: we might want add warning log when accessing it from lua
         table.set("__internal", private)?;
@@ -67,10 +80,7 @@ impl FromLua for Component {
 
         Ok(Component {
             children,
-            primitive: PrimitiveComponent::from_lua(
-                private.raw_get("primitive_component_name")?,
-                lua
-            )?
+            primitive: PrimitiveComponent::from_lua(private.raw_get("primitive")?, lua)?
         })
     }
 }

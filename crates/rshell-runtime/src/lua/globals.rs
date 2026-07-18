@@ -1,4 +1,5 @@
 use crate::component::Component;
+use crate::component::primitive::PrimitiveComponent;
 use crate::lua::format::format;
 use crate::lua::runtime::ConfigRuntimeCollector;
 use log::{info, trace};
@@ -27,6 +28,13 @@ pub fn prepare_collecting_stage(
     register_global_function(lua, "component", move |_, ()| {
         trace!(target: "lua_globals", "Creating component");
         Ok(Component::default())
+    })?;
+
+    register_global_function(lua, "Window", move |_, ()| {
+        trace!(target: "lua_globals", "Creating window");
+        Ok(Component::new(PrimitiveComponent::Window {
+            lifetime: Default::default()
+        }))
     })?;
 
     register_global_function(lua, "register", move |_, root: Component| {
